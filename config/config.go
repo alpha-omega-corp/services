@@ -7,23 +7,37 @@ import (
 	"sync"
 )
 
+var (
+	//go:embed envs
+	embedFS      embed.FS
+	unwrapFSOnce sync.Once
+	unwrappedFS  fs.FS
+)
+
 type DbConfig struct {
-	ADDR string `yaml:"host"`
-	NAME string `yaml:"name"`
-	USER string `yaml:"user"`
-	PASS string `yaml:"pass"`
+	ADDR string `yaml:"HOST"`
+	NAME string `yaml:"NAME"`
+	USER string `yaml:"USER"`
+	PASS string `yaml:"PASS"`
 }
 
 type Config struct {
-	HOST string   `yaml:"host"`
-	DB   DbConfig `yaml:"db"`
+	HOST   string `yaml:"HOST"`
+	AUTH   string `yaml:"AUTH"`
+	DOCKER string `yaml:"DOCKER"`
+
+	DB DbConfig `yaml:"DB"`
 }
 
-func LoadConfig(fs fs.FS, env string) (*Config, error) {
-	return readConfig(fs, env)
+func Get(env string) (*Config, error) {
+	return load(config(&unwrapFSOnce, embedFS, unwrappedFS), env)
 }
 
-func MakeConfig(unwrapOnce *sync.Once, embed embed.FS, unwrapped fs.FS) fs.FS {
+func load(fs fs.FS, env string) (*Config, error) {
+	return read(fs, env)
+}
+
+func config(unwrapOnce *sync.Once, embed embed.FS, unwrapped fs.FS) fs.FS {
 	unwrapOnce.Do(func() {
 		fileSys, err := fs.Sub(embed, "envs")
 		if err != nil {
@@ -35,7 +49,7 @@ func MakeConfig(unwrapOnce *sync.Once, embed embed.FS, unwrapped fs.FS) fs.FS {
 	return unwrapped
 }
 
-func readConfig(fileSys fs.FS, env string) (*Config, error) {
+func read(fileSys fs.FS, env string) (*Config, error) {
 	b, err := fs.ReadFile(fileSys, env+".yaml")
 	if err != nil {
 		return nil, err
