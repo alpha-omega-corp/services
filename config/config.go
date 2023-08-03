@@ -29,8 +29,13 @@ type Config struct {
 	DB DbConfig `yaml:"DB"`
 }
 
-func Get(env string) (*Config, error) {
-	return load(config(&unwrapFSOnce, embedFS, unwrappedFS), env)
+func Get(env string) *Config {
+	c, err := load(config(&unwrapFSOnce, embedFS, unwrappedFS), env)
+	if err != nil {
+		panic(err)
+	}
+
+	return c
 }
 
 func load(fs fs.FS, env string) (*Config, error) {
