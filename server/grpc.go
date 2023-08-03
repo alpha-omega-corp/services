@@ -2,8 +2,8 @@ package server
 
 import (
 	"fmt"
-	"github.com/alpha-omega-corp/services/config"
-	"github.com/alpha-omega-corp/services/database"
+	"github.com/alpha-omega-corp/modules/config"
+	"github.com/alpha-omega-corp/modules/database"
 	"github.com/uptrace/bun"
 	"google.golang.org/grpc"
 	"log"

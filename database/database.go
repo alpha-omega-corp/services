@@ -2,7 +2,7 @@ package database
 
 import (
 	"database/sql"
-	"github.com/alpha-omega-corp/services/config"
+	"github.com/alpha-omega-corp/modules/config"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
 	"github.com/uptrace/bun/driver/pgdriver"
