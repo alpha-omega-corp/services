@@ -10,12 +10,11 @@ import (
 	"net"
 )
 
-func NewGRPC(host string, env string, proto func(h *database.Handler, grpc *grpc.Server)) error {
-	c := config.Get(env)
+func NewGRPC(host string, c *config.Config, proto func(h *database.Handler, grpc *grpc.Server)) error {
 	listen, err := net.Listen("tcp", host)
 
 	if err != nil {
-		log.Fatalln("Failed to listen:", err)
+		return err
 	}
 
 	grpcServer := grpc.NewServer()
