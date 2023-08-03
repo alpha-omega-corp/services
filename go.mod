@@ -1,9 +1,8 @@
-module github.com/alpha-omega-corp/modules
+module github.com/alpha-omega-corp/services
 
 go 1.20
 
 require (
-	github.com/alpha-omega-corp/modules v0.0.0-20230803151301-329a6e2efdde
 	github.com/golang-jwt/jwt/v5 v5.0.0
 	github.com/uptrace/bun v1.1.14
 	github.com/uptrace/bun/dialect/pgdialect v1.1.14
