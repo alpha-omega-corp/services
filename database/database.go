@@ -47,11 +47,6 @@ func (h *Handler) Database() *bun.DB {
 	return h.db
 }
 
-func (h *Handler) Close() {
-	defer func(db *bun.DB) {
-		err := db.Close()
-		if err != nil {
-			panic(err)
-		}
-	}(h.db)
+func (h *Handler) Close() error {
+	return h.db.Close()
 }
