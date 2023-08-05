@@ -4,6 +4,6 @@ DOCKER: localhost:50052
 
 DB:
   HOST: localhost:5432
-  NAME: chad_integration
+  NAME: authentication_svc
   USER: root
   PASS: root
