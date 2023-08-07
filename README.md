@@ -1,8 +1,10 @@
 # SERVICES
 
-This repository is a minimalistic SDK for integrating new services to the organisation's architecture. (
+This repository is a minimalistic SDK for integrating new services to the organisation's architecture.
 
 This ensures coherent semantics across all services.
+
+1. [API Gateway](https://github.com/alpha-omega-corp/api-gateway)
 
 # ABOUT IT
 
