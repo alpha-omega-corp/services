@@ -7,9 +7,10 @@ import (
 
 type ConfigManager interface {
 	Read(config string) (err error)
-	HostConfig(svc string) (c config.HostConfig, err error)
+	HostsConfig() (c config.HostsConfig, err error)
 	AuthConfig() (c config.AuthenticationConfig, err error)
 	GithubConfig() (c config.GithubConfig, err error)
+	ServiceConfig(svc string) (c config.ServiceConfig, err error)
 }
 
 type configManager struct {
@@ -36,8 +37,8 @@ func (m *configManager) Read(config string) (err error) {
 	return
 }
 
-func (m *configManager) HostConfig(svc string) (c config.HostConfig, err error) {
-	err = m.Read("/config/" + svc + ".yaml")
+func (m *configManager) HostsConfig() (c config.HostsConfig, err error) {
+	err = m.Read("/config/hosts.yaml")
 	err = m.handler.Unmarshal(&c)
 
 	return
@@ -52,6 +53,13 @@ func (m *configManager) AuthConfig() (c config.AuthenticationConfig, err error) 
 
 func (m *configManager) GithubConfig() (c config.GithubConfig, err error) {
 	err = m.Read("/config/github.yaml")
+	err = m.handler.Unmarshal(&c)
+
+	return
+}
+
+func (m *configManager) ServiceConfig(svc string) (c config.ServiceConfig, err error) {
+	err = m.Read("/config/" + svc + ".yaml")
 	err = m.handler.Unmarshal(&c)
 
 	return
