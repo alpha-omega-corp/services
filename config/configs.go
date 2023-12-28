@@ -1,10 +1,13 @@
 package config
 
 type HostsConfig struct {
-	Hosts []Host `mapstruct:"hosts"`
+	Gateway   Host `mapstruct:"api_gateway"`
+	AuthSVC   Host `mapstruct:"auth_svc"`
+	DockerSVC Host `mapstruct:"docker_svc"`
 }
 
 type Host struct {
+	Name string `mapstruct:"name"`
 	Host string `mapstruct:"host"`
 	Dsn  string `mapstruct:"dsn"`
 }
