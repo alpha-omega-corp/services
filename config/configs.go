@@ -13,9 +13,14 @@ type Host struct {
 }
 
 type GithubConfig struct {
-	ClassicToken      string `mapstruct:"githubToken"`
-	OrganizationUrl   string `mapstruct:"organizationUrl"`
-	ContainerRegistry string `mapstruct:"containerRegistry"`
+	ClassicToken string       `mapstruct:"token"`
+	Organization Organization `mapstruct:"organization"`
+}
+
+type Organization struct {
+	Name     string `mapstruct:"name"`
+	Url      string `mapstruct:"url"`
+	Registry string `mapstruct:"registry"`
 }
 
 type AuthenticationConfig struct {
