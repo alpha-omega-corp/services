@@ -1,9 +1,9 @@
 package config
 
 type HostsConfig struct {
-	Gateway   Host `mapstruct:"api_gateway"`
-	AuthSVC   Host `mapstruct:"auth_svc"`
-	DockerSVC Host `mapstruct:"docker_svc"`
+	Gateway Host `mapstruct:"gateway"`
+	Auth    Host `mapstruct:"auth"`
+	Docker  Host `mapstruct:"docker"`
 }
 
 type Host struct {
