@@ -8,7 +8,7 @@ func NewConfigurationManager(handler *viper.Viper, config string) (err error) {
 		return
 	}
 
-	viper.SetConfigType("yaml")
+	handler.SetConfigType("yaml")
 	err = handler.ReadRemoteConfig()
 
 	return
