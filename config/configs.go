@@ -13,7 +13,7 @@ type Host struct {
 }
 
 type GithubConfig struct {
-	ClassicToken string       `mapstruct:"token"`
+	Token        string       `mapstruct:"token"`
 	Organization Organization `mapstruct:"organization"`
 }
 
