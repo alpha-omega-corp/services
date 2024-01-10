@@ -9,23 +9,28 @@ import (
 	"net"
 )
 
-func NewGRPC(host string, h *database.Handler, proto func(db *bun.DB, grpc *grpc.Server)) error {
+func NewGRPC(host string, dbHandler *database.Handler, proto func(db *bun.DB, grpc *grpc.Server)) error {
 	listen, err := net.Listen("tcp", host)
 
 	if err != nil {
 		return err
 	}
 
-	grpcServer := grpc.NewServer()
-	proto(h.Database(), grpcServer)
+	srv := grpc.NewServer()
+	if dbHandler != nil {
+		db := dbHandler.Database()
+		defer func(db *bun.DB) {
+			err := db.Close()
+			if err != nil {
+				log.Fatal(err)
+			}
+		}(db)
 
-	defer func(db *bun.DB) {
-		err := db.Close()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}(h.Database())
+		proto(db, srv)
+	} else {
+		proto(nil, srv)
+	}
 
 	fmt.Printf("running at tcp://%v", host)
-	return grpcServer.Serve(listen)
+	return srv.Serve(listen)
 }
