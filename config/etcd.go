@@ -1,83 +1,81 @@
 package config
 
 import (
-	"fmt"
 	"github.com/alpha-omega-corp/services/types"
 	"github.com/spf13/viper"
+	_ "github.com/spf13/viper/remote"
+	"strings"
 )
 
-type Manager interface {
-	Read(config string) (err error)
-	Hosts() (c types.ConfigHosts, err error)
-
-	UserService() (c types.ConfigUserService, err error)
-	ConfigService() (c types.ConfigConfigService, err error)
-	GithubService() (c types.ConfigGithubService, err error)
-}
-
 type Handler interface {
-	Manager() Manager
-}
-
-type manager struct {
-	handler *viper.Viper
+	Read(key string, format string) (err error)
+	Environment(name string) (env *types.Environment, err error)
 }
 
 type handler struct {
 	Handler
+
+	viper *viper.Viper
 }
 
 func NewHandler() Handler {
-	return &handler{}
-}
-
-func (h *handler) Manager() Manager {
-	return newManager(viper.New())
-}
-
-func newManager(h *viper.Viper) Manager {
-	return &manager{
-		handler: h,
+	return &handler{
+		viper: nil,
 	}
 }
 
-func (m *manager) Read(key string) (err error) {
-	err = m.handler.AddRemoteProvider("etcd3", "http://127.0.0.1:2379", key)
+func (m *handler) Read(key string, format string) (err error) {
+	m.handle()
+	err = m.viper.AddRemoteProvider("etcd3", "http://127.0.0.1:2379", key)
 	if err != nil {
 		return
 	}
 
-	m.handler.SetConfigType("yaml")
-	err = m.handler.ReadRemoteConfig()
+	m.viper.SetConfigType(format)
+	err = m.viper.ReadRemoteConfig()
 
 	return
 }
 
-func (m *manager) Hosts() (c types.ConfigHosts, err error) {
-	err = m.Read("config_hosts")
-	err = m.handler.Unmarshal(&c)
+func (m *handler) Environment(name string) (env *types.Environment, err error) {
+	var envVars types.EnvVars
+	err = m.Read("env_"+name, "yaml")
+	err = m.viper.Unmarshal(&envVars)
+	if err != nil {
+		return
+	}
 
-	fmt.Print(err)
+	var hostConfig types.ConfigHost
+	err = m.Read(strings.ToLower(envVars.Host), "yaml")
+	err = m.viper.Unmarshal(&hostConfig)
+	if err != nil {
+		return
+	}
+
+	if envVars.Config != "" {
+		err = m.Read(strings.ToLower(envVars.Config), "env")
+		if err != nil {
+			return
+		}
+
+		env = &types.Environment{
+			Vars: envVars,
+			Host: hostConfig,
+			Config: types.Config{
+				Viper: m.viper,
+			},
+		}
+	} else {
+		env = &types.Environment{
+			Vars: envVars,
+			Host: hostConfig,
+		}
+	}
+
 	return
 }
 
-func (m *manager) UserService() (c types.ConfigUserService, err error) {
-	err = m.Read("config_user")
-	err = m.handler.Unmarshal(&c)
-
-	return
-}
-
-func (m *manager) GithubService() (c types.ConfigGithubService, err error) {
-	err = m.Read("config_github")
-	err = m.handler.Unmarshal(&c)
-
-	return
-}
-
-func (m *manager) ConfigService() (c types.ConfigConfigService, err error) {
-	err = m.Read("config_config")
-	err = m.handler.Unmarshal(&c)
-
+func (m *handler) handle() {
+	m.viper = viper.New()
 	return
 }

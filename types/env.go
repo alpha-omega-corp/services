@@ -1,8 +1,5 @@
 package types
 
-type ConfigGithubService struct {
-	Organization ConfigGithubOrg `mapstruct:"organization"`
-}
 type ConfigUserService struct {
 	JwtSecret string `mapstruct:"secret"`
 }
@@ -11,8 +8,14 @@ type ConfigConfigService struct {
 	Mode string `mapstruct:"mode"`
 }
 
+type EnvVars struct {
+	Host    string `mapstruct:"host"`
+	Config  string `mapstruct:"config"`
+	Service string `mapstruct:"name"`
+}
+
 type Environment struct {
-	ServiceVar    string `mapstruct:"service"`
-	RepositoryVar string `mapstruct:"repository"`
-	ConfigVar     string `mapstruct:"config"`
+	Vars   EnvVars
+	Config Config
+	Host   ConfigHost
 }
